@@ -57,7 +57,8 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Add your FORK output here
-            execution += "FORK, " + time + '\n';
+            system_status += "time: " + std::to_string(current_time) + "; current trace: FORK, " + std::to_string(time) + '\n';
+            system_status += print_PCB(current, wait_queue) + '\n';
             ///////////////////////////////////////////////////////////////////////////////////////////
 
             // The following loop helps you do 2 things:
@@ -106,7 +107,11 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // With the child's trace, run the child (HINT: think recursion)
+            auto [child_execution, child_system_status, child_current_time] = simulate_trace(child_trace, current_time, vectors, delays, external_files, current, wait_queue);
 
+            execution += child_execution;
+            system_status += child_system_status;
+            current_time = child_current_time;
             ///////////////////////////////////////////////////////////////////////////////////////////
         }
         else if (activity == "EXEC")
@@ -117,7 +122,8 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Add your EXEC output here
-            execution += ("EXEC " + program_name + ", " + std::to_string(time) + '\n');
+            system_status += ("time: " + std::to_string(current_time) + "; current trace: EXEC " + program_name + ", " + std::to_string(time) + '\n');
+            system_status += print_PCB(current, wait_queue) + '\n';
             ///////////////////////////////////////////////////////////////////////////////////////////
 
             std::ifstream exec_trace_file(program_name + ".txt");
@@ -131,7 +137,11 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // With the exec's trace (i.e. trace of external program), run the exec (HINT: think recursion)
+            auto [child_execution, child_system_status, child_current_time] = simulate_trace(exec_traces, current_time, vectors, delays, external_files, current, wait_queue);
 
+            execution += child_execution;
+            system_status += child_system_status;
+            current_time = child_current_time;
             ///////////////////////////////////////////////////////////////////////////////////////////
 
             break; // Why is this important? (answer in report)
