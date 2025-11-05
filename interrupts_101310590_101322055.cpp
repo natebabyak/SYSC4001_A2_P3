@@ -60,27 +60,23 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
             execution += std::to_string(current_time) + ", " + std::to_string(duration_intr) + ", cloning the PCB\n";
             current_time += duration_intr;
 
+            PCB child(current.PID + 1, current.PID, current.program_name, current.size, current.partition_number);
+
+            if (!allocate_memory(&child))
+            {
+                std::cerr << "ERROR! Memory allocation failed!" << std::endl;
+                break;
+            }
+
+            wait_queue.push_back(current);
+            current = child;
+
             execution += std::to_string(current_time) + ", 0, scheduler called\n";
             execution += std::to_string(current_time) + ", 1, IRET\n";
             current_time += 1;
 
-            unsigned int new_pid = current.PID;
-            for (const auto &p : wait_queue)
-            {
-                if (p.PID >= new_pid)
-                    new_pid = p.PID + 1;
-            }
-            if (new_pid == current.PID)
-                new_pid += 1;
-
-            PCB child(new_pid, current.PID, current.program_name, current.size, -1);
-
-            wait_queue.push_back(current);
-
-            system_status += "time: " + std::to_string(current_time) + "; current trace: FORK, " + std::to_string(time) + '\n';
-            system_status += print_PCB(current, wait_queue) + '\n';
-
-            current = child;
+            system_status += "time: " + std::to_string(current_time) + "; current trace: FORK, " + std::to_string(duration_intr) + '\n';
+            system_status += print_PCB(child, wait_queue) + '\n';
             ///////////////////////////////////////////////////////////////////////////////////////////
 
             // The following loop helps you do 2 things:
@@ -134,6 +130,9 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
             execution += child_execution;
             system_status += child_system_status;
             current_time = child_current_time;
+
+            current = wait_queue.back();
+            wait_queue.pop_back();
             ///////////////////////////////////////////////////////////////////////////////////////////
         }
         else if (activity == "EXEC")
@@ -145,24 +144,47 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Add your EXEC output here
             int program_size = get_size(program_name, external_files);
+
+            if (program_size == -1)
+            {
+                std::cerr << "ERROR! Memory allocation failed!" << std::endl;
+                break;
+            }
+
             execution += std::to_string(current_time) + ", " + std::to_string(duration_intr) + ", Program is " + std::to_string(program_size) + " Mb large\n";
             current_time += duration_intr;
 
-            int load_time = program_size * 15;
-            execution += std::to_string(current_time) + ", " + std::to_string(load_time) + ", loading program into memory\n";
-            current_time += load_time;
+            int loading_time = program_size * 15;
+            execution += std::to_string(current_time) + ", " + std::to_string(loading_time) + ", loading program into memory\n";
+            current_time += loading_time;
 
-            execution += std::to_string(current_time) + ", 3, marking partition as occupied\n";
-            current_time += 3;
+            if (current.partition_number != -1)
+            {
+                free_memory(&current);
+            }
 
-            execution += std::to_string(current_time) + ", 6, updating PCB\n";
-            current_time += 6;
+            current.program_name = program_name;
+            current.size = program_size;
+
+            if (!allocate_memory(&current))
+            {
+                std::cerr << "ERROR! Memory allocation failed!" << std::endl;
+                break;
+            }
+
+            int marking_time = (rand() % 10) + 1;
+            execution += std::to_string(current_time) + ", " + std::to_string(marking_time) + ", marking partition as occupied\n";
+            current_time += marking_time;
+
+            int updating_time = (rand() % 10) + 1;
+            execution += std::to_string(current_time) + ", " + std::to_string(updating_time) + ", updating PCB\n";
+            current_time += updating_time;
 
             execution += std::to_string(current_time) + ", 0, scheduler called\n";
             execution += std::to_string(current_time) + ", 1, IRET\n";
             current_time += 1;
 
-            system_status += ("time: " + std::to_string(current_time) + "; current trace: EXEC " + program_name + ", " + std::to_string(program_size) + '\n');
+            system_status += ("time: " + std::to_string(current_time) + "; current trace: EXEC " + program_name + ", " + std::to_string(duration_intr) + '\n');
             system_status += print_PCB(current, wait_queue) + '\n';
             ///////////////////////////////////////////////////////////////////////////////////////////
 

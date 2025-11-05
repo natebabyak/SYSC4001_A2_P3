@@ -1,24 +1,23 @@
-time: 24; current trace: FORK, 13
+time: 24; current trace: FORK, 10
 +------------------------------------------------------+
 | PID |program name |partition number | size |   state |
 +------------------------------------------------------+
-|   0 |        init |               6 |    1 | running |
+|   1 |        init |               5 |    1 | running |
 |   0 |        init |               6 |    1 | waiting |
 +------------------------------------------------------+
 
-time: 247; current trace: EXEC program1, 10
+time: 256; current trace: EXEC program1, 50
 +------------------------------------------------------+
 | PID |program name |partition number | size |   state |
 +------------------------------------------------------+
-|   1 |        init |              -1 |    1 | running |
+|   1 |    program1 |               4 |   10 | running |
 |   0 |        init |               6 |    1 | waiting |
 +------------------------------------------------------+
 
-time: 620; current trace: EXEC program2, 15
+time: 633; current trace: EXEC program2, 25
 +------------------------------------------------------+
 | PID |program name |partition number | size |   state |
 +------------------------------------------------------+
-|   1 |        init |              -1 |    1 | running |
-|   0 |        init |               6 |    1 | waiting |
+|   0 |    program2 |               3 |   15 | running |
 +------------------------------------------------------+
 

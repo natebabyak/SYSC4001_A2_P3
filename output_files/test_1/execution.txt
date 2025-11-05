@@ -11,24 +11,24 @@
 36, 1, load address 0X042B into the PC
 37, 50, Program is 10 Mb large
 87, 150, loading program into memory
-237, 3, marking partition as occupied
-240, 6, updating PCB
-246, 0, scheduler called
-246, 1, IRET
-247, 100, CPU Burst
-347, 1, switch to kernel mode
-348, 10, context saved
-358, 1, find vector 3 in memory position 0x0006
-359, 1, load address 0X042B into the PC
-360, 25, Program is 15 Mb large
-385, 225, loading program into memory
-610, 3, marking partition as occupied
-613, 6, updating PCB
-619, 0, scheduler called
-619, 1, IRET
-620, 1, switch to kernel mode
-621, 10, context saved
-631, 1, find vector 4 in memory position 0x0008
-632, 1, load address 0X0292 into the PC
-633, 250, SYSCALL ISR
-883, 1, IRET
+237, 8, marking partition as occupied
+245, 10, updating PCB
+255, 0, scheduler called
+255, 1, IRET
+256, 100, CPU Burst
+356, 1, switch to kernel mode
+357, 10, context saved
+367, 1, find vector 3 in memory position 0x0006
+368, 1, load address 0X042B into the PC
+369, 25, Program is 15 Mb large
+394, 225, loading program into memory
+619, 4, marking partition as occupied
+623, 9, updating PCB
+632, 0, scheduler called
+632, 1, IRET
+633, 1, switch to kernel mode
+634, 10, context saved
+644, 1, find vector 4 in memory position 0x0008
+645, 1, load address 0X0292 into the PC
+646, 250, SYSCALL ISR
+896, 1, IRET
