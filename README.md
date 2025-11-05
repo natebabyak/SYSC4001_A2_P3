@@ -37,15 +37,14 @@ else
 fi
 
 for i in {1..3}; do
+    mv input_files/test_$i/program*.txt ./
+
     bin/interrupts input_files/test_$i/trace.txt input_files/vector_table.txt input_files/device_table.txt input_files/test_$i/external_files.txt
 
-    if [ -d "output_files/test_$i" ]; then
-        rm output_files/test_$i/*
-    else
-        mkdir output_files/test_$i
-    fi
+    mkdir output_files/test_$i
 
-    mv execution.txt output_files/test_$i/
-    mv system_status.txt output_files/test_$i/
+    mv execution.txt system_status.txt output_files/test_$i/
+
+    mv program*.txt input_files/test_$i/
 done
 ```

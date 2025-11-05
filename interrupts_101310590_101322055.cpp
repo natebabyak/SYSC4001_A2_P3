@@ -31,7 +31,7 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
             execution += intr;
             current_time = time;
 
-            execution += std::to_string(current_time) + ", " + std::to_string(delays[duration_intr]) + ", SYSCALL ISR (ADD STEPS HERE)\n";
+            execution += std::to_string(current_time) + ", " + std::to_string(delays[duration_intr]) + ", SYSCALL ISR\n";
             current_time += delays[duration_intr];
 
             execution += std::to_string(current_time) + ", 1, IRET\n";
@@ -43,7 +43,7 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
             current_time = time;
             execution += intr;
 
-            execution += std::to_string(current_time) + ", " + std::to_string(delays[duration_intr]) + ", ENDIO ISR(ADD STEPS HERE)\n";
+            execution += std::to_string(current_time) + ", " + std::to_string(delays[duration_intr]) + ", ENDIO ISR\n";
             current_time += delays[duration_intr];
 
             execution += std::to_string(current_time) + ", 1, IRET\n";
@@ -57,8 +57,30 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Add your FORK output here
+            execution += std::to_string(current_time) + ", " + std::to_string(duration_intr) + ", cloning the PCB\n";
+            current_time += duration_intr;
+
+            execution += std::to_string(current_time) + ", 0, scheduler called\n";
+            execution += std::to_string(current_time) + ", 1, IRET\n";
+            current_time += 1;
+
+            unsigned int new_pid = current.PID;
+            for (const auto &p : wait_queue)
+            {
+                if (p.PID >= new_pid)
+                    new_pid = p.PID + 1;
+            }
+            if (new_pid == current.PID)
+                new_pid += 1;
+
+            PCB child(new_pid, current.PID, current.program_name, current.size, -1);
+
+            wait_queue.push_back(current);
+
             system_status += "time: " + std::to_string(current_time) + "; current trace: FORK, " + std::to_string(time) + '\n';
             system_status += print_PCB(current, wait_queue) + '\n';
+
+            current = child;
             ///////////////////////////////////////////////////////////////////////////////////////////
 
             // The following loop helps you do 2 things:
@@ -122,7 +144,25 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
 
             ///////////////////////////////////////////////////////////////////////////////////////////
             // Add your EXEC output here
-            system_status += ("time: " + std::to_string(current_time) + "; current trace: EXEC " + program_name + ", " + std::to_string(time) + '\n');
+            int program_size = get_size(program_name, external_files);
+            execution += std::to_string(current_time) + ", " + std::to_string(duration_intr) + ", Program is " + std::to_string(program_size) + " Mb large\n";
+            current_time += duration_intr;
+
+            int load_time = program_size * 15;
+            execution += std::to_string(current_time) + ", " + std::to_string(load_time) + ", loading program into memory\n";
+            current_time += load_time;
+
+            execution += std::to_string(current_time) + ", 3, marking partition as occupied\n";
+            current_time += 3;
+
+            execution += std::to_string(current_time) + ", 6, updating PCB\n";
+            current_time += 6;
+
+            execution += std::to_string(current_time) + ", 0, scheduler called\n";
+            execution += std::to_string(current_time) + ", 1, IRET\n";
+            current_time += 1;
+
+            system_status += ("time: " + std::to_string(current_time) + "; current trace: EXEC " + program_name + ", " + std::to_string(program_size) + '\n');
             system_status += print_PCB(current, wait_queue) + '\n';
             ///////////////////////////////////////////////////////////////////////////////////////////
 
