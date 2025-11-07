@@ -22,7 +22,7 @@
 
 \section{Introduction}
 
-The objective of this part of the assignment is to build a small API simulator. The simulator has one CPU, fixed partitions in memory, and is primarily focused on providing functionality for \verb|fork()| and \verb|exec()| system calls. This final part of the assignment builds on the final part of the previous assignment, where we simulated an interrupt system.
+The objective of this part of the assignment is to design and implement a small API simulator for a single-CPU system. Building on the interrupt system developed in the previous assignment, this simulator adds support for the \verb|fork| and \verb|exec| system calls. It models process creation, memory allocation, and program loading using fixed memory partitions.
 
 \section{Tests}
 
@@ -30,60 +30,60 @@ The objective of this part of the assignment is to build a small API simulator. 
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_1/execution.txt}{\texttt{execution.txt}}}
 
-First, \verb|init| calls \verb|fork()|, which creates a child process. The child executes \verb|program1| using \verb|exec|, which is loaded into the 10 Mb partition. Once the child completes, the parent executes \verb|program2| in the 15 Mb partition. Each system call causes an ISR to be triggered, as configured during the previous assignment.
+The test begins with the \verb|init| process calling \verb|fork|, which creates a child process. The child then executes \verb|program1| using \verb|exec|, loading it into the 10 MB partition. After the child completes, the parent executes \verb|program2| in the 15 MB partition. Each system call triggers an interrupt service routine (ISR), as with the configuration implemented in the previous assignment.
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_1/system_status.txt}{\texttt{system\_status.txt}}}
 
-At time 24, the system executes \verb|FORK, 10|, creating a child process. The child (PID 1) inherits the parent's PCB and is made to run, while the parent (PID 0) is made to wait because our system gives priority to children over their parents. At around time 256, the child executes \verb|program1|. The best-fit allocation strategy assigns \verb|program1| (10 Mb) partition number 4 (10 Mb). At around time 633, the parent executes \verb|program2|, which allocates partition number 3 (15 Mb) to \verb|program2| (15 Mb). At this point \verb|init| no longer exists and has been replaced by \verb|program2|.
+At time 24, the system executes \verb|fork|, creating a child process. The child (PID 1) inherits the parent's PCB and begins running, while the parent (PID 0) is placed in the waiting state, since the simulator gives priority to child processes. Around time 256, the child executes \verb|program1|. Using the best-fit allocation strategy, \verb|program1| (10 MB) is assigned to partition 4 (10 MB). At approximately time 633, the parent executes \verb|program2|, which gets partition 3 (15 MB). At this point, \verb|init| has been replaced by \verb|program2|.
 
 \subsection{Test 2}
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_2/execution.txt}{\texttt{execution.txt}}}
 
-First, \verb|init| forks a child process. The child then executes \verb|program1|. This child process forks a child process itself. After \verb|program1| completes, its parent excutes \verb|program2|. Finally the rest of \verb|init| is executed by the parent.
+The test begins with the \verb|init| process creating a child through \verb|fork|. The child then executes \verb|program1|. During its execution, \verb|program1| itself calls \verb|fork|, creating another child process. Once \verb|program1| completes, its parent executes \verb|program2|. Finally, the remaining portion of \verb|init| resumes execution in the parent process.
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_2/system_status.txt}{\texttt{system\_status.txt}}}
 
-Around time 31, the system executes \verb|FORK|, creating a child process. The child (PID 1) has the same PCB as its parent (PID 0) and is set to running. Around time 229, the child executes \verb|program1|, which takes 10 Mb, and is thus allocated partition number 4 (10 Mb). Around time 258, \verb|program1| executes \verb|FORK|, which creates another \verb|program1| with PID 2 and at partition number 3. Around time 543, the child executes \verb|program2|.
+Around time 31, the system executes \verb|fork|, creating a child process. The child (PID 1) inherits the parent's PCB and begins running, while the parent (PID 0) waits. Around time 229, the child executes \verb|program1|, which requires 10 MB and is allocated to partition 4 (10 MB) using the best-fit strategy. At time 258, \verb|program1| executes another \verb|fork|, creating a new process (PID 2) that also runs \verb|program1| and is allocated partition 3. Around time 543, the child executes \verb|program2|, completing the sequence of nested forks and executions.
 
 \subsection{Test 3}
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_3/execution.txt}{\texttt{execution.txt}}}
 
-In this test, \verb|FORK| is called and \verb|program1| is loaded into the parent, while child is left untouched. The child then runs until completion before the parent executes.
+This test begins with the \verb|init| process invoking \verb|fork|, which creates a child process. The parent then executes \verb|program1|, while the child remains unchanged. The child process runs first and completes execution before the parent resumes and runs to completion.
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_3/system_status.txt}{\texttt{system\_status.txt}}}
 
-At around time 34, \verb|init| executes \verb|FORK|, which creates a child (PID 1) with the same PCB as the parent (PID 0). The child is set to running and, using best-fit allocation, is allocated partition number 5. At around time 286, the child has completed and the parent executes \verb|program1|, which is 10 Mb, and is thus allocated parition number 4 (10 Mb).
+At around time 34, \verb|init| executes \verb|fork|, which creates a child (PID 1). The child is set to run and is allocated partition number 5 using best-fit allocation. At around time 286, the child has completed and the parent executes \verb|program1| (10 MB), and is thus allocated partition number 4 (10 MB).
 
 \subsection{Test 4}
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_4/execution.txt}{\texttt{execution.txt}}}
 
-This test starts with a \verb|FORK|, which clone the current PCB into the process. Then, the memory image of \verb|program1| is copied into the child. This program also invokes \verb|FORK| and this child executes \verb|program2|. The programs run child-first, meaning \verb|program2| first, then \verb|program1|, and finally \verb|program3| is executed by \verb|init|.
+This test starts with a \verb|fork|, which clones the current PCB into the process. The child process inherits the memory image of \verb|program1|. This program also invokes \verb|fork| and the child executes \verb|program2|. The programs run child-first, meaning \verb|program2| first, then \verb|program1|, and finally \verb|program3| is executed by \verb|init|.
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_4/system_status.txt}{\texttt{system\_status.txt}}}
 
-At around time 26, \verb|FORK| is invoked, resulting in a child process (PID 1). At around time 228, the child process executes \verb|program1|, which occupies parition number 4. At around time 252, \verb|program1| executes \verb|FORK| itself, creating another \verb|program1| with PID 2. This child then executes \verb|program2|, which occupies paritition number 5 as 4 is already occupied. Finally, at around time 1791, after the two children have completed, \verb|init| executes \verb|program3| (10 Mb), which is allocated parititon number 3 (15 Mb).
+At around time 26, \verb|fork| is invoked, resulting in a child process (PID 1). At around time 228, the child process executes \verb|program1|, which occupies partition number 4. At around time 252, \verb|program1| executes \verb|fork| itself, creating another \verb|program1| with PID 2. This child then executes \verb|program2|, which occupies partition number 5, as 4 is already occupied. Finally, at around time 1791, after the two children have completed, \verb|init| executes \verb|program3| (10 MB), which is allocated partition number 3 (15 MB).
 
 \subsection{Test 5}
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_5/execution.txt}{\texttt{execution.txt}}}
 
-First, \verb|FORK| is used to create a child (PID 1), which starts running. This child executes \verb|program1|, which then runs to completion. The parent (PID 1) then executes \verb|program2|, which also runs to completion.
+First, \verb|fork| is used to create a child (PID 1), which starts running. This child executes \verb|program1|, which then runs to completion. The parent (PID 0) then executes \verb|program2|, which also runs to completion.
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_5/system_status.txt}{\texttt{system\_status.txt}}}
 
-At around time 32, \verb|init| invokes \verb|FORK|, which creates a child (PID 1) and allocates it partition number 5. At around time 274, the child process exeuctes \verb|program1|, which is 12 Mb and is thus allocated parition number 3 (15 Mb). After \verb|program1| completes, the parent process executes \verb|program2|, which is allocated parition number 2 (25 Mb) to fit its 18 Mb size. Finally \verb|program2| runs until completion.
+At around time 32, \verb|init| invokes \verb|fork|, which creates a child (PID 1) and allocates it partition number 5. At around time 274, the child process executes \verb|program1| (12 MB) and is thus allocated partition number 3 (15 MB). After \verb|program1| completes, the parent process executes \verb|program2| (18 MB), which is allocated partition number 2 (25 MB). Finally \verb|program2| runs until completion.
 
 \section{Conclusion}
 
-In conclusion, this part of the assignment effectively demonstrated how a single-CPU system with fixed memory partitions could work when dealing with \verb|fork()| and \verb|exec()| system calls.
+In conclusion, this part of the assignment successfully demonstrated process creation and program execution in a single-CPU system with fixed memory partitions, emphasizing the behavior of \verb|fork| and \verb|exec| system calls and the simulator's scheduling and memory allocation mechanisms.
 
 \section*{Appendix}
 
 \begin{itemize}
-    \item \href{https://github.com/natebabyak/SYSC4001_A2_P2}{SYSC 4001 Assignment 2 --- Part II}
+    \item \href{https://github.com/Ozan446/SYSC4001_A2_P2}{SYSC 4001 Assignment 2 --- Part II}
     \item \href{https://github.com/natebabyak/SYSC4001_A2_P3}{SYSC 4001 Assignment 2 --- Part III}
 \end{itemize}
 
