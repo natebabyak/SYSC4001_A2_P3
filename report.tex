@@ -4,7 +4,6 @@
 \usepackage{fancyhdr}
 \usepackage[headheight=15pt,margin=1in]{geometry}
 \usepackage{lastpage}
-\usepackage{lipsum}
 \usepackage[allcolors=blue,colorlinks=true]{hyperref}
 
 \pagestyle{fancy}
@@ -23,7 +22,7 @@
 
 \section{Introduction}
 
-The goal of this part is to simulate \verb|fork()| and \verb|exec()| system calls using a single CPU, fixed memory partitions, PCB, and external files.
+The objective of this part of the assignment is to build a small API simulator. This simulator has one CPU, fixed partitions in memory, and is primarily focused at providing functionality for \verb|fork()| and \verb|exec()|. This final part of the assignment builds on the final part of the previous assignment, where we simulated an interrupt system.
 
 \section{Tests}
 
@@ -41,45 +40,45 @@ At time 24, the system executes \verb|FORK, 10| creating a child process. The ch
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_2/execution.txt}{\texttt{execution.txt}}}
 
-\lipsum[3]
+Init forks a child process. The child executes \verb|program1| using \verb|EXEC|. This program forks a child process, does nothing with it, then excutes \verb|program2|. After this program executes, we return to the
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_2/system_status.txt}{\texttt{system\_status.txt}}}
 
-\lipsum[4]
+Around time 31, the system executes \verb|FORK|, creating a child process. The child (PID 1) has the same PCB as its parent (PID 0) and is set to running. Around time 229, the child executes \verb|program1|, which takes 10 Mb, and is thus allocated partition number 4 (10 Mb). Around time 258, \verb|program1| executes \verb|FORK|, which creates another \verb|program1| with PID 2 and at partition number 3. Around time 543, the child executes \verb|program2|.
 
 \subsection{Test 3}
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_3/execution.txt}{\texttt{execution.txt}}}
 
-\lipsum[5]
+In this test, \verb|FORK| is called and \verb|program1| is loaded into the parent, while child is left untouched. The child then runs until completion before the parent executes.
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_3/system_status.txt}{\texttt{system\_status.txt}}}
 
-\lipsum[6]
+At around time 34, \verb|init| executes \verb|FORK|, which creates a child (PID 1) with the same PCB as the parent (PID 0). The child is set to running and, using best-fit allocation, is allocated partition number 5. At around time 286, the child has completed and the parent executes \verb|program1|, which is 10 Mb, and is thus allocated parition number 4 (10 Mb).
 
 \subsection{Test 4}
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_4/execution.txt}{\texttt{execution.txt}}}
 
-\lipsum[7]
+This test starts with a \verb|FORK|, which clone the current PCB into the process. Then, the memory image of \verb|program1| is copied into the child. This program also invokes \verb|FORK| and this child executes \verb|program2|. The programs run child-first, meaning \verb|program2| first, then \verb|program1|, and finally \verb|program3| is executed by \verb|init|.
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_4/system_status.txt}{\texttt{system\_status.txt}}}
 
-\lipsum[8]
+At around time 26, \verb|FORK| is invoked, resulting in a child process (PID 1). At around time 228, the child process executes \verb|program1|, which occupies parition number 4. At around time 252, \verb|program1| executes \verb|FORK| itself, creating another \verb|program1| with PID 2. This child then executes \verb|program2|, which occupies paritition number 5 as 4 is already occupied. Finally, at around time 1791, after the two children have completed, \verb|init| executes \verb|program3| (10 Mb), which is allocated parititon number 3 (15 Mb).
 
 \subsection{Test 5}
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_5/execution.txt}{\texttt{execution.txt}}}
 
-\lipsum[9]
+First, \verb|FORK| is used to create a child (PID 1), which starts running. This child executes \verb|program1|, which then runs to completion. The parent (PID 1) then executes \verb|program2|, which also runs to completion.
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_5/system_status.txt}{\texttt{system\_status.txt}}}
 
-\lipsum[10]
+At around time 32, \verb|init| invokes \verb|FORK|, which creates a child (PID 1) and allocates it partition number 5. At around time 274, the child process exeuctes \verb|program1|, which is 12 Mb and is thus allocated parition number 3 (15 Mb). After \verb|program1| completes, the parent process executes \verb|program2|, which is allocated parition number 2 (25 Mb) to fit its 18 Mb size. Finally \verb|program2| runs until completion.
 
 \section{Conclusion}
 
-\lipsum[11]
+In conclusion,
 
 \section*{Appendix}
 
