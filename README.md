@@ -31,17 +31,17 @@ source build.sh
 
 ```sh
 if [ -d "output_files" ]; then
-    rm output_files/*
+    rm -rf output_files/*
 else
     mkdir output_files
 fi
 
-for i in {1..3}; do
+for i in {1..5}; do
     mv input_files/test_$i/program*.txt ./
 
     bin/interrupts input_files/test_$i/trace.txt input_files/vector_table.txt input_files/device_table.txt input_files/test_$i/external_files.txt
 
-    mkdir output_files/test_$i
+    mkdir -p output_files/test_$i
 
     mv execution.txt system_status.txt output_files/test_$i/
 
