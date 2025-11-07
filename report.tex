@@ -4,6 +4,7 @@
 \usepackage{fancyhdr}
 \usepackage[headheight=15pt,margin=1in]{geometry}
 \usepackage{lastpage}
+\usepackage{lipsum}
 \usepackage[allcolors=blue,colorlinks=true]{hyperref}
 
 \pagestyle{fancy}
@@ -34,23 +35,57 @@ Init forks a child process. The child executes \verb|program1| using exec, which
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_1/system_status.txt}{\texttt{system\_status.txt}}}
 
-best-fit allocation
+At time 24, the system executes \verb|FORK, 10| creating a child process. The child (PID 1) inherits the parent's PCB and is made to run, while the parent (PID 0) is made to wait because children have a higher priority. Around time 256, the child executes \verb|EXEC program1, 50|. Using best-fit allocation, \verb|program1| (10 Mb) is allocated partition number 4 (10 Mb). Around time 633, after the child completes execution, the parent executes \verb|EXEC program2, 25|, which allocates partition number 3 (15 Mb) to \verb|program2| (15 Mb).
 
 \subsection{Test 2}
 
+\subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_2/execution.txt}{\texttt{execution.txt}}}
+
+\lipsum[3]
+
+\subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_2/system_status.txt}{\texttt{system\_status.txt}}}
+
+\lipsum[4]
+
 \subsection{Test 3}
+
+\subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_3/execution.txt}{\texttt{execution.txt}}}
+
+\lipsum[5]
+
+\subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_3/system_status.txt}{\texttt{system\_status.txt}}}
+
+\lipsum[6]
 
 \subsection{Test 4}
 
+\subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_4/execution.txt}{\texttt{execution.txt}}}
+
+\lipsum[7]
+
+\subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_4/system_status.txt}{\texttt{system\_status.txt}}}
+
+\lipsum[8]
+
 \subsection{Test 5}
 
+\subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_5/execution.txt}{\texttt{execution.txt}}}
+
+\lipsum[9]
+
+\subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_5/system_status.txt}{\texttt{system\_status.txt}}}
+
+\lipsum[10]
+
 \section{Conclusion}
+
+\lipsum[11]
 
 \section*{Appendix}
 
 \begin{itemize}
     \item \href{https://github.com/natebabyak/SYSC4001_A2_P2}{SYSC 4001 Assignment 2 --- Part II}
-    \item \href{https://github.com/natebabyak/SYSC4001_A2_P2}{SYSC 4001 Assignment 2 --- Part III}
+    \item \href{https://github.com/natebabyak/SYSC4001_A2_P3}{SYSC 4001 Assignment 2 --- Part III}
 \end{itemize}
 
 \end{document}
