@@ -1,7 +1,9 @@
 /**
- * @file interrupts.cpp
+ * @file interrupts_101310590_101322055.cpp
  *
  * @author Sasisekhar Govind
+ * @author Nate Babyak 101310590
+ * @author Ozan Kaya 101322055
  */
 
 #include <interrupts_101310590_101322055.hpp>
