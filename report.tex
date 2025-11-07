@@ -1,9 +1,16 @@
-\newcommand{\thetitle}{SYSC 4001 Assignment 2 Part 3}
+\newcommand{\thetitle}{SYSC 4001 Assignment 2 --- Part III}
 
-\documentclass[12pt]{article}
+\documentclass[12pt,titlepage]{article}
 \usepackage{fancyhdr}
-\usepackage[margin=1in]{geometry}
-\usepackage[allcolors=black,colorlinks=true]{hyperref}
+\usepackage[headheight=15pt,margin=1in]{geometry}
+\usepackage{lastpage}
+\usepackage[allcolors=blue,colorlinks=true]{hyperref}
+
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[R]{\thetitle}
+\fancyfoot{}
+\fancyfoot[C]{Page \thepage\ of\ \pageref{LastPage}}
 
 \title{\bfseries\thetitle}
 \author{Nate Babyak --- 101310590 \\ Ozan Kaya --- 101322055}
@@ -17,13 +24,17 @@
 
 The goal of this part is to simulate \verb|fork()| and \verb|exec()| system calls using a single CPU, fixed memory partitions, PCB, and external files.
 
-The simulator is made of the following components:
-
 \section{Tests}
 
-All input files are located within the \verb|input_files| directory, with each test having its own \verb|test_n| directory. Each \verb|test_n| directory contains the test's \verb|trace.txt|, \verb|external_files.txt|, and \verb|programn.txt| files.
-
 \subsection{Test 1}
+
+\subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_1/execution.txt}{\texttt{execution.txt}}}
+
+Init forks a child process. The child executes \verb|program1| using exec, which is loaded into a 10 Mb partition, and its PCB is updated. Upon child completion, the parent will execute \verb|program2| in a separate 15 Mb partition. Each system call causes an ISR to be triggered, which will be followed by memory partition allocation and a scheduler call. The execution log contains timestamps for context switches, entry into kernel mode, and CPU bursts to demonstrate that fork/exec and priority handling are being sequenced correctly.
+
+\subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_1/system_status.txt}{\texttt{system\_status.txt}}}
+
+best-fit allocation
 
 \subsection{Test 2}
 
@@ -35,8 +46,11 @@ All input files are located within the \verb|input_files| directory, with each t
 
 \section{Conclusion}
 
-\href{https://github.com/natebabyak/SYSC4001_A2_P2}{Part 2 GitHub Repository Link}
+\section*{Appendix}
 
-\href{https://github.com/natebabyak/SYSC4001_A2_P3}{Part 3 GitHub Repository Link}
+\begin{itemize}
+    \item \href{https://github.com/natebabyak/SYSC4001_A2_P2}{SYSC 4001 Assignment 2 --- Part II}
+    \item \href{https://github.com/natebabyak/SYSC4001_A2_P2}{SYSC 4001 Assignment 2 --- Part III}
+\end{itemize}
 
 \end{document}
