@@ -60,7 +60,7 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
             execution += std::to_string(current_time) + ", " + std::to_string(duration_intr) + ", cloning the PCB\n";
             current_time += duration_intr;
 
-            PCB child(current.PID + 1, current.PID, current.program_name, current.size, current.partition_number);
+            PCB child(current.PID + 1, current.PID, current.program_name, current.size, -1);
 
             if (!allocate_memory(&child))
             {
@@ -130,6 +130,8 @@ std::tuple<std::string, std::string, int> simulate_trace(std::vector<std::string
             execution += child_execution;
             system_status += child_system_status;
             current_time = child_current_time;
+
+            free_memory(&current);
 
             current = wait_queue.back();
             wait_queue.pop_back();

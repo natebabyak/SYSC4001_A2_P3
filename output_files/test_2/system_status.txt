@@ -36,7 +36,7 @@ time: 872; current trace: EXEC program2, 33
 +------------------------------------------------------+
 | PID |program name |partition number | size |   state |
 +------------------------------------------------------+
-|   1 |    program2 |               2 |   15 | running |
+|   1 |    program2 |               3 |   15 | running |
 |   0 |        init |               6 |    1 | waiting |
 +------------------------------------------------------+
 
