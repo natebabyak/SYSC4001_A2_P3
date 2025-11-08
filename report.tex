@@ -30,7 +30,7 @@ The objective of this part of the assignment is to design and implement a small 
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_1/execution.txt}{\texttt{execution.txt}}}
 
-The test begins with the \verb|init| process calling \verb|fork|, which creates a child process. The child then executes \verb|program1| using \verb|exec|, loading it into the 10 MB partition. After the child completes, the parent executes \verb|program2| in the 15 MB partition. Each system call triggers an interrupt service routine (ISR), as with the configuration implemented in the previous assignment.
+The test begins with the \verb|init| process calling \verb|fork|, which creates a child process. The child then executes \verb|program1| using \verb|exec|, loading it into the 10 MB partition. After the child completes, the parent executes \verb|program2| in the 15 MB partition. Each system call triggers an interrupt service routine (ISR), as with the configuration implemented in the previous assignment. The rest of the trace doesn't really matter because we only care about the \verb|fork| and \verb|exec| calls.
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_1/system_status.txt}{\texttt{system\_status.txt}}}
 
@@ -40,7 +40,7 @@ At time 24, the system executes \verb|fork|, creating a child process. The child
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_2/execution.txt}{\texttt{execution.txt}}}
 
-The test begins with the \verb|init| process creating a child through \verb|fork|. The child then executes \verb|program1|. During its execution, \verb|program1| itself calls \verb|fork|, creating another child process. Once \verb|program1| completes, its parent executes \verb|program2|. Finally, the remaining portion of \verb|init| resumes execution in the parent process.
+The test begins with the \verb|init| process creating a child through \verb|fork|. The child then executes \verb|program1|. During its execution, \verb|program1| itself calls \verb|fork|, creating another child process. Once \verb|program1| completes, its parent executes \verb|program2|. Finally, the remaining portion of \verb|init| resumes execution in the parent process. Both processes execute \verb|program2|.
 
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_2/system_status.txt}{\texttt{system\_status.txt}}}
 
@@ -75,6 +75,10 @@ First, \verb|fork| is used to create a child (PID 1), which starts running. This
 \subsubsection{Analysis of \href{https://github.com/natebabyak/SYSC4001_A2_P3/blob/main/output_files/test_5/system_status.txt}{\texttt{system\_status.txt}}}
 
 At around time 32, \verb|init| invokes \verb|fork|, which creates a child (PID 1) and allocates it partition number 5. At around time 274, the child process executes \verb|program1| (12 MB) and is thus allocated partition number 3 (15 MB). After \verb|program1| completes, the parent process executes \verb|program2| (18 MB), which is allocated partition number 2 (25 MB). Finally \verb|program2| runs until completion.
+
+\section{Discussion}
+
+The line \verb|break;| inside the \verb|exec| block is important because when a process executes an \verb|exec| call, it replaces its current memory image with a new program. If the loop didn't break, the simulator would keep reading and executing the old trace instruction from the previous program.
 
 \section{Conclusion}
 
